@@ -1,0 +1,32 @@
+######## PROJECT ########
+
+[project]
+name = "tmp"
+version = "1"
+description = "tmp"
+authors = [
+    {name = "Sébastien Gardoll", email = "sebastien@gardoll.fr"},
+]
+license = "CECILL-2.1"
+
+dependencies = [
+    "pydantic>=2.9.2",
+    "fastapi>=0.115.8",
+    "uvicorn>=0.34.0",
+]
+readme = "README.md"
+requires-python = ">= 3.12"
+
+[build-system]
+requires = ["hatchling==1.26.3"]
+build-backend = "hatchling.build"
+
+######## TOOLS ########
+
+[tool.uv]
+managed = true
+default-groups = "all"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/esgvoc_backend"]
+
