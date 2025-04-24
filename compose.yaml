@@ -1,0 +1,17 @@
+name: test_webhook
+
+services:
+    latest:
+        image: test_webhook
+        ports:
+            - 80:80
+        environment:
+            - WEB_CONCURRENCY=1
+        restart: always
+        secrets:
+            - gh_web_hook_secret
+        build: .
+
+secrets:
+  gh_web_hook_secret:
+    file: ./gh_web_hook_secret

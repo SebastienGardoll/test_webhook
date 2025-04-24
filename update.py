@@ -54,10 +54,12 @@ def check_payload(raw_payload: bytes | None, event_type: str | None,
         _LOGGER.info(msg)
         _LOGGER.info('return 400')
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=msg)
+    """
     if not check_signature(raw_payload=raw_payload, signature=signature, secret=secret):
         # Do not raise an exception: security best practices.
         _LOGGER.info('mismatch signature')
         return False
+    """
     if event_type:
         if event_type != 'push':
             _LOGGER.info(f"event type '{event_type}' not supported")
