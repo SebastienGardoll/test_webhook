@@ -123,8 +123,6 @@ async def update(request: Request,
             if UPDATE_FILE_PATH.exists():
                 _LOGGER.info('update file already exists (skip)')
             else:
-                if not UPDATE_DIR_PATH.exists():
-                    UPDATE_DIR_PATH.mkdir()
                 file_content = [f'date: {datetime.now()}\n',
                                 f'web hook payload:\n\n{str(raw_payload)}']
                 with open(UPDATE_FILE_PATH, 'w') as file:
