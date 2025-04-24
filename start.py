@@ -1,5 +1,5 @@
 import os
-
+import logging
 import uvicorn
 
 _DEFAULT_NB_WORKERS = 1
@@ -7,6 +7,7 @@ _UVICORN_WORKERS_VAR_ENV_NAME = "WEB_CONCURRENCY"
 _UVICORN_PORT = 80
 _APP = "app:app"
 
+logging.basicConfig(level=logging.INFO)
 
 def main():
     n_workers = (
