@@ -124,7 +124,7 @@ async def update(request: Request,
                 _LOGGER.info('update file already exists (skip)')
             else:
                 file_content = [f'date: {datetime.now()}\n',
-                                f'web hook payload:\n\n{str(raw_payload)}']
+                                f'web hook payload:\n\n{json.dumps(raw_payload)}']
                 with open(UPDATE_FILE_PATH, 'w') as file:
                     file.writelines(file_content)
                 _LOGGER.info('update file written')
