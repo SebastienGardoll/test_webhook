@@ -1,11 +1,11 @@
-FROM python:3.12-alpine AS esgvoc-backend
+FROM python:3.12-alpine AS test_webhook
 
 RUN apk update && apk upgrade && apk add git
 
-WORKDIR /var/www
-ADD https://github.com/SebastienGardoll/test_webhook.git test_webhook
+WORKDIR /
+RUN git clone https://github.com/SebastienGardoll/test_webhook.git
 
-WORKDIR /var/www/test_webhook
+WORKDIR /test_webhook
 RUN pip install .
 
 CMD ["python","-c","from start import main; main()"]
