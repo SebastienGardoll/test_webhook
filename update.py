@@ -10,7 +10,8 @@ from datetime import datetime
 
 BRANCH_NAME: str = 'esgvoc'
 FILE_OF_INTEREST_SUFFIX = '.json'
-GH_WEB_HOOK_SECRET_FILE_PATH = Path('/run/secrets/gh_web_hook_secret')
+GH_WEB_HOOK_SECRET_FILE_NAME = 'gh_web_hook_secret'
+GH_WEB_HOOK_SECRET_FILE_PATH = Path(f'/run/secrets/{GH_WEB_HOOK_SECRET_FILE_NAME}')
 UPDATE_DIR_PATH = Path('update')
 UPDATE_FILE_PATH = UPDATE_DIR_PATH.joinpath('mark')
 _LOGGER = logging.getLogger(__name__)
