@@ -7,7 +7,7 @@ import json
 from pathlib import PurePath
 
 BRANCH_NAME: str = 'esgvoc'
-FILE_OF_INTEREST_SUFFIX = '.md'
+FILE_OF_INTEREST_SUFFIX = '.json'
 _LOGGER = logging.getLogger(__name__)
 router = APIRouter()
 
