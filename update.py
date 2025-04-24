@@ -4,12 +4,22 @@ import hmac
 from fastapi import APIRouter, HTTPException, Request, Header, status
 import logging
 import json
-from pathlib import PurePath
+from pathlib import PurePath, Path
 
 BRANCH_NAME: str = 'esgvoc'
 FILE_OF_INTEREST_SUFFIX = '.json'
+GH_WEB_HOOK_SECRET_FILE_PATH = Path('/run/secrets/gh_web_hook_secret')
 _LOGGER = logging.getLogger(__name__)
+GH_WEB_HOOK_SECRET: str | None = None
+
 router = APIRouter()
+
+
+if GH_WEB_HOOK_SECRET_FILE_PATH.exists():
+    with open(GH_WEB_HOOK_SECRET_FILE_PATH, 'r') as file:
+        GH_WEB_HOOK_SECRET = file.read()
+else:
+    _LOGGER.error('missing GitHub web hook secret (route update is disabled)')
 
 
 def check_signature(raw_payload: bytes, signature: str, secret: str) -> bool:
@@ -99,10 +109,13 @@ def check_payload(raw_payload: bytes | None, event_type: str | None,
 @router.post('/update')
 async def update(request: Request,
                  x_hub_signature_256: Annotated[str | None, Header()] = None,
-                 x_github_event: Annotated[str | None, Header()] = None):
-    raw_payload = await request.body()
-    _LOGGER.info(f'payload: {raw_payload}')
-    if check_payload(raw_payload, x_github_event, x_hub_signature_256, 'monsecret'):
-        _LOGGER.info('checks passed')
+                 x_github_event: Annotated[str | None, Header()] = None) -> None:
+    if GH_WEB_HOOK_SECRET:
+        raw_payload = await request.body()
+        _LOGGER.info(f'payload: {raw_payload}')
+        if check_payload(raw_payload, x_github_event, x_hub_signature_256, GH_WEB_HOOK_SECRET):
+            _LOGGER.info('checks passed')
+        else:
+            _LOGGER.info('ignore')
     else:
-        _LOGGER.info('ignore')
+        _LOGGER.error('missing GitHub web hook secret (route disable)')
