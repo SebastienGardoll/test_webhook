@@ -5,16 +5,20 @@ from fastapi import APIRouter, HTTPException, Request, Header, status
 import logging
 import json
 from pathlib import PurePath, Path
+from datetime import datetime
+
 
 BRANCH_NAME: str = 'esgvoc'
 FILE_OF_INTEREST_SUFFIX = '.json'
 GH_WEB_HOOK_SECRET_FILE_PATH = Path('/run/secrets/gh_web_hook_secret')
+UPDATE_DIR_PATH = Path('update')
+UPDATE_FILE_PATH = UPDATE_DIR_PATH.joinpath('mark')
 _LOGGER = logging.getLogger(__name__)
-GH_WEB_HOOK_SECRET: str | None = None
+
 
 router = APIRouter()
 
-
+GH_WEB_HOOK_SECRET: str | None = None
 if GH_WEB_HOOK_SECRET_FILE_PATH.exists():
     with open(GH_WEB_HOOK_SECRET_FILE_PATH, 'r') as file:
         GH_WEB_HOOK_SECRET = file.read()
@@ -112,9 +116,17 @@ async def update(request: Request,
                  x_github_event: Annotated[str | None, Header()] = None) -> None:
     if GH_WEB_HOOK_SECRET:
         raw_payload = await request.body()
-        _LOGGER.info(f'payload: {raw_payload}')
+        _LOGGER.info(f'web hook payload: {raw_payload}')
         if check_payload(raw_payload, x_github_event, x_hub_signature_256, GH_WEB_HOOK_SECRET):
             _LOGGER.info('checks passed')
+            if UPDATE_FILE_PATH.exists():
+                _LOGGER.info('update file already exists (skip)')
+            else:
+                file_content = [f'date: {datetime.now()}',
+                                f'web hook payload: {raw_payload}']
+                with open(UPDATE_FILE_PATH, 'w') as file:
+                    file.writelines(file_content)
+                _LOGGER.info('update file written')
         else:
             _LOGGER.info('ignore')
     else:

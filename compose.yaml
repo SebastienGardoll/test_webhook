@@ -11,6 +11,10 @@ services:
         secrets:
             - gh_web_hook_secret
         build: .
+        volumes:
+            - type: bind
+              source: update
+              target: /test_webhook/update
 
 secrets:
   gh_web_hook_secret:
