@@ -117,14 +117,15 @@ async def update(request: Request,
                  x_github_event: Annotated[str | None, Header()] = None) -> None:
     if GH_WEB_HOOK_SECRET:
         raw_payload = await request.body()
-        _LOGGER.info(f'web hook payload: {raw_payload}')
+        payload = json.loads(raw_payload)
+        _LOGGER.info(f'web hook payload: {payload}')
         if check_payload(raw_payload, x_github_event, x_hub_signature_256, GH_WEB_HOOK_SECRET):
             _LOGGER.info('checks passed')
             if UPDATE_FILE_PATH.exists():
                 _LOGGER.info('update file already exists (skip)')
             else:
                 file_content = [f'date: {datetime.now()}\n',
-                                f'web hook payload:\n\n{json.loads(raw_payload)}']
+                                f'web hook payload:\n\n{payload}']
                 with open(UPDATE_FILE_PATH, 'w') as file:
                     file.writelines(file_content)
                 _LOGGER.info('update file written')
