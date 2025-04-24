@@ -123,8 +123,10 @@ async def update(request: Request,
             if UPDATE_FILE_PATH.exists():
                 _LOGGER.info('update file already exists (skip)')
             else:
-                file_content = [f'date: {datetime.now()}',
-                                f'web hook payload: {raw_payload}']
+                if not UPDATE_DIR_PATH.exists():
+                    UPDATE_DIR_PATH.mkdir()
+                file_content = [f'date: {datetime.now()}\n',
+                                f'web hook payload:\n\n{str(raw_payload)}']
                 with open(UPDATE_FILE_PATH, 'w') as file:
                     file.writelines(file_content)
                 _LOGGER.info('update file written')
